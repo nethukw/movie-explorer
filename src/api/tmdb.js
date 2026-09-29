@@ -14,6 +14,9 @@ export const getTrendingMovies = (page = 1) => tmdbApi.get('/trending/movie/day'
 export const searchMovies = (query, page = 1) => tmdbApi.get('/search/movie', { params: { query, page } });
 
 // Get movie details
-export const getMovieDetails = (id) => tmdbApi.get(`/movie/${id}`);
+export const getMovieDetails = (id) => 
+  tmdbApi.get(`/movie/${id}`, {
+    params: { append_to_response: 'credits,videos' }
+  });
 
 export default tmdbApi;
