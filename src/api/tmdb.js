@@ -1,38 +1,34 @@
-import axios from 'axios';
 
-const tmdbApi = axios.create({
-  baseURL: process.env.REACT_APP_TMDB_BASE_URL,
-  params: {
-    api_key: process.env.REACT_APP_TMDB_API_KEY,
-  },
+import axios from "axios";
+
+const api = axios.create({
+  baseURL: "https://api.themoviedb.org/3",
+  params: { api_key: process.env.REACT_APP_TMDB_KEY },
+  timeout: 10000,
 });
 
-// Get trending movies
-export const getTrendingMovies = (page = 1) => tmdbApi.get('/trending/movie/day', { params: { page } });
+export const IMG = "https://image.tmdb.org/t/p/w500";
+export const getTrending = (page = 1) => api.get("/trending/movie/week", { params: { page } }).then((r) => r.data);
+export const searchMovies = (query, page = 1) => api.get("/search/movie", { params: { query, page } }).then((r) => r.data);
+export const getMovie = (id) => api.get(`/movie/${id}`, { params: { append_to_response: "credits,videos" } }).then((r) => r.data);
 
-// Search movies
-export const searchMovies = (query, page = 1) => tmdbApi.get('/search/movie', { params: { query, page } });
-
-// Get movie details
-export const getMovieDetails = (id) => 
-  tmdbApi.get(`/movie/${id}`, {
-    params: { append_to_response: 'credits,videos' }
-  });
-
-// Get genres list
-export const getGenres = () => tmdbApi.get('/genre/movie/list');
-
-// Filter movies based on genre, year, and rating
-export const discoverMovies = (page = 1, filters = {}) => {
-  return tmdbApi.get('/discover/movie', {
-    params: {
-      page,
-      with_genres: filters.genre || undefined,
-      primary_release_year: filters.year || undefined,
-      'vote_average.gte': filters.rating || undefined, 
-      sort_by: 'popularity.desc'
-    }
-  });
+// Convert any axios error into a user-friendly message
+export const errMsg = (e) => {
+  if (!process.env.REACT_APP_TMDB_KEY) return "Missing TMDb API key. Add REACT_APP_TMDB_KEY to your .env file.";
+  if (e.code === "ECONNABORTED" || !e.response) return "Network problem. Please check your connection and try again.";
+  if (e.response.status === 401) return "Invalid TMDb API key.";
+  if (e.response.status === 404) return "We couldn't find that movie.";
+  if (e.response.status === 429) return "Too many requests. Please wait a moment.";
+  return "Something went wrong. Please try again later.";
 };
 
-export default tmdbApi;
+// genres + filtering
+export const getGenres = () => api.get("/genre/movie/list").then((r) => r.data.genres);
+
+export const searchMoviesFiltered = (query, page, year) => api.get("/search/movie", { params: { query, page, ...(year && { year }) } }).then((r) => r.data);
+
+export const discoverMovies = (page, { genre, year, rating }) =>
+  api.get("/discover/movie", { params: {
+    page, sort_by: "popularity.desc", "vote_count.gte": 50,
+    ...(genre && { with_genres: genre }), ...(year && { primary_release_year: year }), ...(rating && { "vote_average.gte": rating }),
+  } }).then((r) => r.data);

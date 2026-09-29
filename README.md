@@ -1,70 +1,32 @@
-# Getting Started with Create React App
+# 🎬 Movie Explorer
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+React app to search movies, view details and trailers, and keep a favorites list, powered by the TMDb API.
 
-## Available Scripts
+## Setup
+1. `npm install`
+2. Get a free API key at https://www.themoviedb.org/settings/api
+3. Copy `.env.copy` to `.env` and set `REACT_APP_TMDB_KEY`
+4. `npm start` → http://localhost:3000
 
-In the project directory, you can run:
+## Deploy (Vercel/Netlify)
+Import the repo, build command `npm run build`, output `build`, and add `REACT_APP_TMDB_KEY` as an environment variable.
+For Netlify add a `_redirects` file in `public/` containing `/* /index.html 200` for React Router.
 
-### `npm start`
+## API usage (axios, `src/api/tmdb.js`)
+- `GET /trending/movie/week` – trending
+- `GET /search/movie` – search (paginated)
+- `GET /movie/{id}?append_to_response=credits,videos` – details, cast, trailer
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Features
+- Login (demo only: any username + 4+ char password; no backend)
+- Trending grid, search with infinite scroll, poster/title/year/rating cards
+- Movie details: overview, genres, cast, embedded YouTube trailer
+- Favorites list and last search persisted in localStorage
+- Light/dark mode, mobile-first responsive grid
+- Friendly error messages (bad key, network, 404, rate limit)
+- State via React Context (`src/context/AppContext.js`)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Bonus features (all implemented)
+- Filter by genre, year and minimum rating (`/discover/movie`; when searching, year uses the search API and genre/rating are filtered client-side)
+- YouTube trailer embedded on the details page (from TMDb `videos`)
+- Toggle between infinite scroll and a "Load more" button (choice is remembered)
