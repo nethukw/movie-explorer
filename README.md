@@ -2,15 +2,15 @@
 
 React app to search movies, view details and trailers, and keep a favorites list, powered by the TMDb API.
 
+## 🔗 Live Demo
+Live Link: https://movieexplorerbynethukzz.netlify.app/
+
 ## Setup
-1. `npm install`
+1. Install dependencies: 
+    `npm install`
 2. Get a free API key at https://www.themoviedb.org/settings/api
 3. Copy `.env.copy` to `.env` and set `REACT_APP_TMDB_KEY`
-4. `npm start` → http://localhost:3000
-
-## Deploy (Vercel/Netlify)
-Import the repo, build command `npm run build`, output `build`, and add `REACT_APP_TMDB_KEY` as an environment variable.
-For Netlify add a `_redirects` file in `public/` containing `/* /index.html 200` for React Router.
+4. Start the development server: `npm start` → http://localhost:3000
 
 ## API usage (axios, `src/api/tmdb.js`)
 - `GET /trending/movie/week` – trending
@@ -26,7 +26,7 @@ For Netlify add a `_redirects` file in `public/` containing `/* /index.html 200`
 - Friendly error messages (bad key, network, 404, rate limit)
 - State via React Context (`src/context/AppContext.js`)
 
-## Bonus features (all implemented)
+## Bonus features 
 - Filter by genre, year and minimum rating (`/discover/movie`; when searching, year uses the search API and genre/rating are filtered client-side)
 - YouTube trailer embedded on the details page (from TMDb `videos`)
 - Toggle between infinite scroll and a "Load more" button (choice is remembered)
