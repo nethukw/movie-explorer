@@ -5,14 +5,11 @@ import { MovieContext } from '../context/MovieContext';
 import { Container, Grid, Typography, Box, TextField, Button, CircularProgress, Snackbar, Alert } from '@mui/material';
 
 export default function Home() {
-  // Get lastSearch and setLastSearch from MovieContext 
   const { lastSearch, setLastSearch } = useContext(MovieContext);
 
   const [movies, setMovies] = useState([]);
-  // Get the last search query from MovieContext and initialize query state with it
   const [query, setQuery] = useState(lastSearch || ''); 
   const [page, setPage] = useState(1);
-
   const [isSearching, setIsSearching] = useState(!!lastSearch); 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null); 
@@ -44,6 +41,7 @@ export default function Home() {
 
   useEffect(() => {
     fetchMovies(page, query);
+    // eslint-disable-next-line
   }, [page]);
 
   const handleSearch = (e) => {
@@ -52,20 +50,6 @@ export default function Home() {
     setLastSearch(query); 
     fetchMovies(1, query);
   };
-
-  // Infinite Scrolling Logic
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.innerHeight + document.documentElement.scrollTop + 1 >= document.documentElement.scrollHeight) {
-        if (!loading) {
-          setPage((prev) => prev + 1); 
-        }
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [loading]);
 
   const handleCloseError = () => setError(null);
 
@@ -88,11 +72,22 @@ export default function Home() {
         ))}
       </Grid>
 
-      {loading && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}>
+      {/* Load More Button */}
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}>
+        {loading ? (
           <CircularProgress />
-        </Box>
-      )}
+        ) : (
+          <Button 
+            variant="outlined" 
+            color="primary" 
+            size="large"
+            onClick={() => setPage((prev) => prev + 1)}
+            disabled={movies.length === 0}
+          >
+            Load More
+          </Button>
+        )}
+      </Box>
 
       <Snackbar open={!!error} autoHideDuration={6000} onClose={handleCloseError} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
         <Alert onClose={handleCloseError} severity="error" sx={{ width: '100%' }}>
