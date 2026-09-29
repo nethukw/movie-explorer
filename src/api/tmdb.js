@@ -19,4 +19,20 @@ export const getMovieDetails = (id) =>
     params: { append_to_response: 'credits,videos' }
   });
 
+// Get genres list
+export const getGenres = () => tmdbApi.get('/genre/movie/list');
+
+// Filter movies based on genre, year, and rating
+export const discoverMovies = (page = 1, filters = {}) => {
+  return tmdbApi.get('/discover/movie', {
+    params: {
+      page,
+      with_genres: filters.genre || undefined,
+      primary_release_year: filters.year || undefined,
+      'vote_average.gte': filters.rating || undefined, 
+      sort_by: 'popularity.desc'
+    }
+  });
+};
+
 export default tmdbApi;
