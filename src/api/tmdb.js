@@ -8,10 +8,10 @@ const tmdbApi = axios.create({
 });
 
 // Get trending movies
-export const getTrendingMovies = () => tmdbApi.get('/trending/movie/day');
+export const getTrendingMovies = (page = 1) => tmdbApi.get('/trending/movie/day', { params: { page } });
 
 // Search movies
-export const searchMovies = (query) => tmdbApi.get('/search/movie', { params: { query } });
+export const searchMovies = (query, page = 1) => tmdbApi.get('/search/movie', { params: { query, page } });
 
 // Get movie details
 export const getMovieDetails = (id) => tmdbApi.get(`/movie/${id}`);
