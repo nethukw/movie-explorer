@@ -1,13 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { getTrendingMovies, searchMovies } from '../api/tmdb';
 import MovieCard from '../components/MovieCard';
+import { MovieContext } from '../context/MovieContext'; 
 import { Container, Grid, Typography, Box, TextField, Button, CircularProgress, Snackbar, Alert } from '@mui/material';
 
 export default function Home() {
+  // Get lastSearch and setLastSearch from MovieContext 
+  const { lastSearch, setLastSearch } = useContext(MovieContext);
+
   const [movies, setMovies] = useState([]);
-  const [query, setQuery] = useState('');
+  // Get the last search query from MovieContext and initialize query state with it
+  const [query, setQuery] = useState(lastSearch || ''); 
   const [page, setPage] = useState(1);
-  const [isSearching, setIsSearching] = useState(false);
+
+  const [isSearching, setIsSearching] = useState(!!lastSearch); 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null); 
 
@@ -31,7 +37,6 @@ export default function Home() {
       }
     } catch (err) {
       console.error("Error fetching movies:", err);
-      // Set user-friendly error message
       setError("Failed to fetch movies. Please check your internet connection and try again.");
     }
     setLoading(false);
@@ -44,16 +49,16 @@ export default function Home() {
   const handleSearch = (e) => {
     e.preventDefault();
     setPage(1);
+    setLastSearch(query); 
     fetchMovies(1, query);
   };
 
   // Infinite Scrolling Logic
   useEffect(() => {
     const handleScroll = () => {
-      // Check if the user has scrolled to the bottom of the page
       if (window.innerHeight + document.documentElement.scrollTop + 1 >= document.documentElement.scrollHeight) {
         if (!loading) {
-          setPage((prev) => prev + 1); // Load next page
+          setPage((prev) => prev + 1); 
         }
       }
     };
@@ -83,14 +88,12 @@ export default function Home() {
         ))}
       </Grid>
 
-      {/* Loading Spinner for Infinite Scroll */}
       {loading && (
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}>
           <CircularProgress />
         </Box>
       )}
 
-      {/* Graceful Error Message using MUI Snackbar */}
       <Snackbar open={!!error} autoHideDuration={6000} onClose={handleCloseError} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
         <Alert onClose={handleCloseError} severity="error" sx={{ width: '100%' }}>
           {error}
